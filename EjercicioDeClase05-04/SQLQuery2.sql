@@ -1,3 +1,6 @@
+USE stores7new;
+GO
+
 -- 1)listado de todos los clientes y sus direcciones
 
 SELECT fname ,lname, address1, address2, city FROM customer;
