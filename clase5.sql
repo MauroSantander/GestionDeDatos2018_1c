@@ -69,3 +69,31 @@ WHERE o.order_num = 1004
 GO
 
 SELECT * FROM items	WHERE order_num=1004
+GO
+
+--8)
+SELECT manu_name, lead_time FROM orders o JOIN items i ON (o.order_num=i.order_num)
+	JOIN manufact m ON (i.manu_code=m.manu_code) WHERE o.customer_num=104
+GO
+
+--9)
+SELECT o.order_num, order_date, item_num, description, quantity, total_price FROM orders o
+JOIN items i ON (o.order_num=i.order_num)
+JOIN product_types t ON (i.stock_num=t.stock_num)
+GO
+
+--10) falta ver el formato de phone
+SELECT lname + ', ' + fname nombre_completo, phone, COUNT(order_num) cantidad_ordenes 
+	FROM customer c
+	JOIN orders o ON (c.customer_num=o.customer_num) 
+	GROUP BY lname, fname, phone
+GO
+
+--11)
+SELECT ship_date, lname + ', ' + fname nombre_completo, COUNT(order_num) cantidad_ordenes
+	FROM customer c
+	JOIN orders o ON (c.customer_num=o.customer_num)
+	WHERE state='CA' AND zipcode BETWEEN 94000 AND 94100
+	GROUP BY ship_date, lname, fname
+	ORDER BY ship_date, nombre_completo
+GO	
