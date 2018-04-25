@@ -82,11 +82,14 @@ JOIN items i ON (o.order_num=i.order_num)
 JOIN product_types t ON (i.stock_num=t.stock_num)
 GO
 
---10) falta ver el formato de phone
-SELECT lname + ', ' + fname nombre_completo, phone, COUNT(order_num) cantidad_ordenes 
+--10) falta ver el formato de phone - SUBSTRING(variable, posicionInicial, cantidadCaracteres)
+SELECT lname + ', ' + fname nombre_completo, '(' + SUBSTRING(phone,1,3) + ')' + SUBSTRING(phone,5,8) telefono, COUNT(order_num) cantidad_ordenes 
 	FROM customer c
 	JOIN orders o ON (c.customer_num=o.customer_num) 
 	GROUP BY lname, fname, phone
+GO
+
+SELECT phone FROM customer
 GO
 
 --11)
@@ -96,4 +99,16 @@ SELECT ship_date, lname + ', ' + fname nombre_completo, COUNT(order_num) cantida
 	WHERE state='CA' AND zipcode BETWEEN 94000 AND 94100
 	GROUP BY ship_date, lname, fname
 	ORDER BY ship_date, nombre_completo
-GO	
+GO
+
+/*NOTA NO MENTAL: para saber si dos select son iguales hay que hacer lo siguiente:
+SELECT A MINUS SELECT B
+UNION
+SELECT B MINUS SELECT A
+--resultado: vacío
+*/
+/*
+--12)
+SELECT cantidad_vendida items FROM manufact
+	JOIN
+*/	
