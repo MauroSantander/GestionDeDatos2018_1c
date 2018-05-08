@@ -29,9 +29,11 @@ GROUP BY c.customer_num, lname, fname
 GO
 
 --4) preguntar porque no entendemos
-SELECT order_num, SUM(total_price) total FROM items i
-	GROUP BY order_num
-	HAVING (SUM(total_price) < SUM(SUM(total_price))/COUNT(order_num))
+SELECT o.order_num Nro_de_orden, SUM(total_price)*quantity total FROM orders o
+	JOIN items i ON (o.order_num=i.order_num)
+	GROUP BY o.order_num
+	HAVING SUM(total_price) * quantity <
+	
 GO
 
 --5)
@@ -49,7 +51,7 @@ SELECT m.manu_code, manu_name, p.stock_num, description, unit_price FROM
 	GO
 
 --6)
-SELECT c.customer_num, company, o.order_num, order_date, FROM orders o
+SELECT c.customer_num, company, o.order_num, order_date FROM orders o
 	JOIN customer c ON (c.customer_num=o.customer_num)
 	JOIN items i ON (o.order_num=i.order_num)
 	JOIN product_types t ON (i.stock_num=t.stock_num)
