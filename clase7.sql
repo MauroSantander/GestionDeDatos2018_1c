@@ -1,13 +1,19 @@
 --Clase 7
 
 --1)
-SELECT c.customer_num, lname, fname, SUM(total_price * quantity) total_comprado, COUNT(DISTINCT o.order_num) 'OCs del cliente', (SELECT COUNT(order_num) FROM orders) 'cant_total_todos_los_clientes'
-FROM customer c JOIN orders o ON (c.customer_num=o.customer_num)
-JOIN items i ON (o.order_num=i.order_num)
+SELECT c.customer_num, fname, lname,
+SUM(total_price*quantity)'Total del Cliente',
+COUNT(DISTINCT i.order_num)'OCs del Cliente',
+(SELECT COUNT(o2.order_num) FROM orders o2) 'Cant Total OC'
+FROM customer c JOIN orders o ON (c.customer_num = o.customer_num)
+JOIN items i ON (o.order_num = i.order_num)
 WHERE zipcode LIKE '94%'
-GROUP BY  c.customer_num, lname, fname
-HAVING COUNT(DISTINCT o.order_num) > 1 AND SUM(i.quantity*i.total_price)/COUNT(DISTINCT(SELECT(SUM(total_price*quantity)/COUNT(DISTINCT i.order_num)) --promedio_clientexordencompra > promedio_general_x_ordencompra
-GO 
+GROUP by c.customer_num, fname, lname
+HAVING (SUM(total_price*quantity)/COUNT(DISTINCT i.order_num))
+> (SELECT (SUM(total_price*quantity)/COUNT(DISTINCT i3.order_num))
+FROM items i3)
+AND COUNT(DISTINCT i.order_num) >=2
+GO
 
 SELECT * FROM orders WHERE customer_num=101
 
