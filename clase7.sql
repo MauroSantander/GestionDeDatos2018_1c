@@ -188,8 +188,8 @@ JOIN (SELECT * FROM orders WHERE YEAR(paid_date)=1998) o
 ON (o.customer_num=al.customer_num)
 JOIN items i2
 ON (i2.order_num=o.order_num)
-GROUP BY i2.order_num)) --aca es donde marca el error
-
+GROUP BY i2.order_num) lala ) --aca es donde marca el error
+GO
 --total cobrado de cada orden
 SELECT i2.order_num, SUM(total_price*quantity) total_cobrado FROM items i2 JOIN
 orders o2 ON (i2.order_num=o2.order_num)

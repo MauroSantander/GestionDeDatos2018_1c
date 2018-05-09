@@ -82,7 +82,7 @@ FROM customer c JOIN orders o
 GROUP BY c.customer_num, lname, fname
 	HAVING COUNT(o.order_num)>1
 GO
-
+DROP VIEW ClientesConMultiplesOrdenes
 --10) completar
 CREATE VIEW Productos_HRO
 AS SELECT * FROM products
