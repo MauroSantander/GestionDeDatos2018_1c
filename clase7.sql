@@ -163,3 +163,17 @@ JOIN items i ON (o.order_num = i.order_num)
 GROUP BY c.customer_num, o.order_num
 ORDER BY 1) menor_cant_items_en_una_oc
 GO
+
+-- ** punto 7 **
+
+SELECT m.manu_code, manu_name, i.stock_num, description, SUM(quantity) comprasDeOtrosFabricantes
+	FROM 
+		manufact m JOIN items i ON (m.manu_code = i.manu_code)
+		JOIN product_types pt ON (i.stock_num = pt.stock_num)
+	WHERE 
+		description LIKE '%shoes%' AND
+		i.stock_num IN (SELECT stock_num FROM products GROUP BY stock_num HAVING COUNT(DISTINCT manu_code) > 2)
+		AND i.item_num IN (SELECT item_num FROM items WHERE manu_code != m.manu_code)
+	GROUP BY m.manu_code, manu_name, i.stock_num, description
+	HAVING SUM(quantity) < 10
+GO
