@@ -184,7 +184,7 @@ GROUP BY (c.customer_num), paid_date
 HAVING COUNT(o.order_num) > 4 AND 
 SUM(i1.quantity)
 > (SELECT 1 FROM (SELECT TOP 1 SUM(quantity) cant_maxima_items_en_una_orden FROM (SELECT * FROM customer WHERE state='AK') al 
-JOIN orders o
+JOIN (SELECT * FROM orders WHERE YEAR(paid_date)=1998) o
 ON (o.customer_num=al.customer_num)
 JOIN items i2
 ON (i2.order_num=o.order_num)
@@ -206,6 +206,14 @@ ON (o.customer_num=a.customer_num)
 
 SELECT TOP 1 SUM(quantity) cant_maxima_items_en_una_orden FROM (SELECT * FROM customer WHERE state='AK') a 
 JOIN orders o
+ON (o.customer_num=a.customer_num)
+JOIN items i2
+ON (i2.order_num=o.order_num)
+GROUP BY i2.order_num
+GO
+
+SELECT TOP 1 SUM(quantity) cant_maxima_items_en_una_orden FROM (SELECT * FROM customer WHERE state='AK') a 
+JOIN (SELECT * FROM orders WHERE YEAR(paid_date)=1998) o
 ON (o.customer_num=a.customer_num)
 JOIN items i2
 ON (i2.order_num=o.order_num)
