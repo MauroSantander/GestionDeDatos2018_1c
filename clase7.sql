@@ -164,6 +164,66 @@ GROUP BY c.customer_num, o.order_num
 ORDER BY 1) menor_cant_items_en_una_oc
 GO
 
+
+--6)
+--clientes de california con mas de 4 OC cobradas en 1998
+
+SELECT * INTO #ClientesCalifornia FROM customer WHERE state = 'CA'
+
+SELECT c.customer_num, 
+COUNT(o.order_num) cant_ordenes, 
+(SELECT i2.order_num, SUM(total_price*quantity) total_cobrado 
+	FROM items i2 JOIN
+	orders o2 ON (i2.order_num=o2.order_num)
+	GROUP BY i2.order_num) total_cobrado 
+FROM #ClientesCalifornia c
+JOIN orders o ON (c.customer_num=o.customer_num)
+JOIN items i1 ON (i1.order_num=o.order_num)
+WHERE YEAR(paid_date)=1998
+GROUP BY (c.customer_num), paid_date
+HAVING COUNT(o.order_num) > 4 AND 
+SUM(i1.quantity)
+> (SELECT 1 FROM (SELECT TOP 1 SUM(quantity) cant_maxima_items_en_una_orden FROM (SELECT * FROM customer WHERE state='AK') al 
+JOIN orders o
+ON (o.customer_num=al.customer_num)
+JOIN items i2
+ON (i2.order_num=o.order_num)
+GROUP BY i2.order_num)) --aca es donde marca el error
+
+--total cobrado de cada orden
+SELECT i2.order_num, SUM(total_price*quantity) total_cobrado FROM items i2 JOIN
+orders o2 ON (i2.order_num=o2.order_num)
+GROUP BY i2.order_num
+
+--cantidad total de items por orden
+SELECT i2.order_num, SUM(quantity) total_cobrado FROM items i2 JOIN
+orders o2 ON (i2.order_num=o2.order_num)
+GROUP BY i2.order_num
+
+--orden con mayor cantidad de items en Alaska (AK)
+SELECT * FROM orders o JOIN (SELECT * FROM customer WHERE state='AK') a
+ON (o.customer_num=a.customer_num)
+
+SELECT TOP 1 SUM(quantity) cant_maxima_items_en_una_orden FROM (SELECT * FROM customer WHERE state='AK') a 
+JOIN orders o
+ON (o.customer_num=a.customer_num)
+JOIN items i2
+ON (i2.order_num=o.order_num)
+GROUP BY i2.order_num
+GO
+
+
+--consutas de prueba
+
+--lista los items de la orden 3 y el precio por la cantidad comprada de cada uno de ellos
+SELECT item_num, total_price, quantity, total_price*quantity total FROM items i
+JOIN orders o ON (i.order_num=o.order_num) WHERE o.order_num=1003
+
+SELECT * FROM #ClientesCalifornia
+--fin consultas de prueba
+
+SELECT paid_date FROM orders
+
 -- ** punto 7 **
 
 SELECT m.manu_code, manu_name, i.stock_num, description, SUM(quantity) comprasDeOtrosFabricantes
