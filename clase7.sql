@@ -185,7 +185,7 @@ COUNT(o.order_num) cant_ordenes,
 FROM #ClientesCalifornia c
 JOIN orders o ON (c.customer_num=o.customer_num)
 JOIN items i1 ON (i1.order_num=o.order_num)
-WHERE YEAR(paid_date)=1998
+WHERE YEAR(paid_date)=1998--2015
 GROUP BY (c.customer_num), paid_date
 HAVING COUNT(o.order_num) > 4 AND 
 SUM(i1.quantity)
@@ -241,7 +241,7 @@ SELECT m.manu_code, manu_name, i.stock_num, description, SUM(quantity) comprasDe
 GO
 
 -- ** punto 8 **
-SELECT c1.state, sname, (c1.lname + ', ' + c1.fname) apellido_nombre_cliente1, (c2.lname + ', ' + c2.fname) apellido_nombre_cliente2, SUM(ct1.total_dolares) total
+SELECT c1.state, sname, (c1.lname + ', ' + c1.fname) apellido_nombre_cliente1, (c2.lname + ', ' + c2.fname) apellido_nombre_cliente2, (ct1.total_dolares + ct2.total_dolares) total
 	FROM (SELECT TOP 2 clientes_con_total.state,clientes_con_total.customer_num, clientes_con_total.total_dolares FROM (SELECT c.state, o.customer_num,COUNT(DISTINCT o.order_num)cantidad_de_ordenes, SUM(total_price * quantity) total_dolares
 	FROM orders o JOIN items i ON
 		(o.order_num = i.order_num)
@@ -259,7 +259,7 @@ SELECT c1.state, sname, (c1.lname + ', ' + c1.fname) apellido_nombre_cliente1, (
 		JOIN customer c2 ON (ct2.customer_num = c2.customer_num)
 		JOIN state s ON (s.code = c1.state)
 		WHERE c1.customer_num < c2.customer_num
-		GROUP BY c1.state, sname, c1.lname, c1.fname, c2.lname, c2.fname
+		GROUP BY c1.state, sname, c1.lname, c1.fname, c2.lname, c2.fname, ct1.total_dolares, ct2.total_dolares
 GO
 
 -- ** punto 9 **
