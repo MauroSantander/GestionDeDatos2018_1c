@@ -1,4 +1,4 @@
--- ########## Clase 9 ##########
+-- ########## Clase 8 ##########
 
 -- ** Punto 1 a) **
 
@@ -80,4 +80,22 @@ GO
 
 SELECT * FROM vProductosMasComprados
 ORDER BY cantidadVendida DESC
+GO
+
+-- ** Punto 5 **
+SELECT c.customer_num, fname, lname, paid_date, 0 precioTotal FROM
+	customer c LEFT JOIN orders o ON (c.customer_num = o.customer_num)
+	GROUP BY c.customer_num, fname, lname, paid_date
+	HAVING COUNT(order_num) = 0
+UNION
+SELECT c.customer_num, fname, lname, MAX(paid_date), SUM(quantity * total_price) precioTotal
+	FROM customer c JOIN orders o ON (c.customer_num = o.customer_num)
+	JOIN items i ON (i.order_num = o.order_num)
+GROUP BY c.customer_num, fname, lname, o.order_num
+HAVING SUM(quantity * total_price) > 
+	(SELECT AVG(quantity * total_price) FROM orders o1 JOIN
+		items i1 ON (o1.order_num = i1.order_num AND o1.customer_num = c.customer_num)
+		WHERE o1.order_num != o.order_num
+		GROUP BY o1.customer_num)
+ORDER BY 4 DESC
 GO
