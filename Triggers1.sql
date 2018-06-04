@@ -2,13 +2,13 @@
 --1)
 CREATE TABLE stock_historia_precios (
  stock_historia_Id INT Identity PRIMARY KEY,
- stock_num INT,
+ stock_num SMALLINT,
  manu_code CHAR(3),
  fechaYhora DATETIME,
- usuario CHAR(20),
+ usuario VARCHAR(20),
  unit_price_old DECIMAL,
  unit_price_new DECIMAL,
- estado char default 'A' check (estado IN ('A','I'))
+ estado CHAR DEFAULT 'A' CHECK (estado IN ('A','I'))
 )
 GO
 
@@ -16,15 +16,23 @@ CREATE TRIGGER cambio_precios_stock ON products
 AFTER UPDATE	
 AS
 BEGIN
-DECLARE @unit_price_old
-DECLARE @unit_price_new
-DECLARE @stock_num
-DECLARE @manu_code char(3)
+DECLARE @unit_price_old DECIMAL
+DECLARE @unit_price_new DECIMAL
+DECLARE @stock_num SMALLINT
+DECLARE @manu_code CHAR(3)
 DECLARE precios_stock CURSOR FOR --??
-INSERT INTO products_historia_precios
+SELECT i.stock_num, i.manu_code, i.unit_price, d.unit_price
+FROM inserted i JOIN deleted d ON (i.stock_num=d.stock_num)
+WHERE (i.unit_price != d.unit_price)
+OPEN precios_stock
+FETCH NEXT FROM precios_stock
+INTO @stock_num, @manu_code, @unit_price_new, @unit_price_old
+WHILE @@FETCH_STATUS = 0
+
+Begin
+
+INSERT INTO stock_historia_precios
 (stock_num, manu_code, unit_price_new,  unit_price_old, fechaYHora, usuario)
-SELECT i.stock.num
-(stock_num, manu_code, unit_price_new, unit_price_old, fechaYHora, usuario)
 
 VALUES
 
@@ -33,7 +41,9 @@ CURRENT_USER)
 FETCH NEXT FROM precios_stock
 INTO @stock_num, @manu_code, @unit_price_new, @unit_price_old
 END
-
+CLOSE precios_stock
+DEALLOCATE precios_stock
+END;
 GO
 
 
