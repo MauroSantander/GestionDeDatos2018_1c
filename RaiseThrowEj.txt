@@ -1,0 +1,42 @@
+-- Ejemplo de Raiserror
+begin
+  declare @numero integer;
+  set @numero = 10;
+  print 'Antes del try'
+  begin try
+        print 'Entra al try'
+        set @numero = @numero/ 0;
+        print 'Sale del try'
+  end try
+  begin catch
+        print 'Entra al catch';
+  	print 'Nro. Error:' + cast(ERROR_NUMBER() as varchar);
+	print 'Mensaje:' + ERROR_MESSAGE();
+	print 'Status:' + cast(ERROR_STATE() as varchar);
+	raiserror('Error en el catch', 16, 1);
+	print 'Despues del Raiserror';
+  end catch
+  print 'Despues del CATCH'
+end
+
+-- Ejemplo de THROW
+begin
+  declare @numero integer;
+  set @numero = 10;
+  print 'Antes del try'
+  begin try
+        print 'Entró al try'
+        -- insert into state values ('z1','desc z1');
+        set @numero = @numero/ 0;
+        print 'Sale del try'
+  end try
+  begin catch
+    print 'Entra al catch';
+  	print 'Nro. Error:' + cast(ERROR_NUMBER() as varchar);
+	print 'Mensaje:' +  ERROR_MESSAGE();
+	print 'Status:' +  cast(ERROR_STATE() as varchar);
+        THROW 50099, 'Disparó el THROW', 2
+	print 'Despues del THROW'
+  end catch
+  print 'Despues del CATCH'
+end
