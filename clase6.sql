@@ -84,6 +84,7 @@ GROUP BY c.customer_num, lname, fname
 GO
 DROP VIEW ClientesConMultiplesOrdenes
 --10) completar
+
 CREATE VIEW Productos_HRO
 AS SELECT * FROM products
 	WHERE manu_code = 'HRO'
